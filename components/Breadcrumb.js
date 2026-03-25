@@ -22,11 +22,11 @@ const Breadcrumb = ({
         <div className="row justify-content-center">
           <div className="col-lg-12 text-center">
             <h1
-              className="fs-120 fs-xs-60 text-resize-h1 lh-0-75 mb-4"
+              className="breadcrumb-title fs-120 fs-xs-60 text-resize-h1 lh-0-75 mb-4"
               dangerouslySetInnerHTML={{ __html: title }}
             ></h1>
             <h4
-              className={`id-color ${
+              className={`breadcrumb-subtitle id-color ${
                 style === 2 ? "bg-dark d-inline rounded-20 p-1 px-3 fs-16" : ""
               }`}
             >

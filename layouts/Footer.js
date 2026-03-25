@@ -28,7 +28,7 @@ const Footer = ({ footerShape = false }) => {
 
   return (
     <footer>
-      {footerShape && (
+      {footerShape &&
         /*
         <img
           src="images/misc/scratches-3.webp"
@@ -36,8 +36,7 @@ const Footer = ({ footerShape = false }) => {
           alt=""
         />
         */
-        null
-      )}
+        null}
       <div className="container-fluid">
         <div className="px-2">
           <div className="row g-4 align-items-center">
@@ -68,6 +67,32 @@ const Footer = ({ footerShape = false }) => {
                   {copy.cta}
                 </h2>
               </a>
+              <div className="footer-social-mobile">
+                <a
+                  href="https://www.linkedin.com/in/davidmorenojacobsson/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="LinkedIn"
+                >
+                  <i className="fa-brands fa-linkedin" />
+                </a>
+                <a
+                  href="mailto:info@davidmoreno.dev"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Email"
+                >
+                  <i className="fa-solid fa-paper-plane" />
+                </a>
+                <a
+                  href="https://wa.me/34690380888"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="WhatsApp"
+                >
+                  <i className="fa-brands fa-whatsapp" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

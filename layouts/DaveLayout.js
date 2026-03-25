@@ -6,6 +6,17 @@ import { daveUtility } from "@/utility";
 import { Fragment, useEffect } from "react";
 import Footer from "./Footer";
 
+const BODY_THEME_CLASSES = [
+  "dark-scheme",
+  "light-scheme",
+  "home-3",
+  "home-4",
+  "home-5",
+  "home-6",
+  "home-7",
+  "home-8",
+];
+
 const DaveLayout = ({
   children,
   bodyClass = "dark-scheme",
@@ -27,9 +38,16 @@ const DaveLayout = ({
     daveUtility.fitText();
     daveUtility.progressBar();
   }, []);
+
   useEffect(() => {
-    document.querySelector("body").className = bodyClass;
-  }, []);
+    const body = document.body;
+    body.classList.remove(...BODY_THEME_CLASSES);
+
+    bodyClass
+      .split(/\s+/)
+      .filter(Boolean)
+      .forEach((className) => body.classList.add(className));
+  }, [bodyClass]);
 
   return (
     <Fragment>
