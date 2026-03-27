@@ -132,6 +132,14 @@ Las personalizaciones principales están en:
 - Existe un warning de Next relacionado con múltiples `package-lock.json`, pero no impide compilar.
 - Algunas decisiones de contenido, imágenes finales o textos del blog todavía pueden evolucionar.
 
+## Roadmap
+
+- Revisar y ampliar el blog con contenido propio definitivo.
+- Seguir refinando detalles responsive en móvil real.
+- Sustituir imágenes temporales o decorativas por assets finales.
+- Revisar dependencias heredadas de la plantilla para eliminar las que ya no aportan valor.
+- Ajustar o ampliar la documentación del proyecto si evoluciona la estructura o el contenido.
+
 ## Estado actual
 
 El proyecto está funcional, compila correctamente y está preparado para seguir refinándose como portfolio personal en producción.

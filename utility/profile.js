@@ -33,14 +33,14 @@ export const featuredTools = [
 ];
 
 export const technicalSkills = [
-  { skill: "HTML & CSS", value: "90%" },
-  { skill: "JavaScript", value: "78%" },
-  { skill: "WordPress", value: "92%" },
-  { skill: "WooCommerce", value: "85%" },
-  { skill: "PHP", value: "80%" },
+  { skill: "HTML & CSS", value: "96%" },
+  { skill: "JavaScript", value: "92%" },
+  { skill: "WordPress", value: "98%" },
+  { skill: "WooCommerce", value: "90%" },
+  { skill: "PHP", value: "93%" },
   { skill: "ACF", value: "88%" },
   { skill: "Git", value: "72%" },
-  { skill: "Performance (Core Web Vitals)", value: "74%" },
+  { skill: "Performance (Core Web Vitals)", value: "82%" },
   { skill: "Shopify", value: "65%" },
-  { skill: "Bedrock / Composer (WordPress)", value: "68%" },
+  { skill: "Bedrock / Composer (WordPress)", value: "84%" },
 ];

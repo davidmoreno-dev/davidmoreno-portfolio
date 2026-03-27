@@ -84,7 +84,7 @@ const works = [
 ];
 
 const WorkCard = ({ image, title, category, year, labels, url }) => {
-  const imageSrc = "images/works/" + image + ".webp";
+  const imageSrc = "/images/works/" + image + ".webp";
   const cardContent = (
     <div className="bg-dark-2 rounded-1 overflow-hidden">
       <div className="hover relative overflow-hidden text-light">

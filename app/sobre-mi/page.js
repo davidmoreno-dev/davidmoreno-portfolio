@@ -211,7 +211,7 @@ const page = () => {
                   data-wow-delay=".6s"
                 >
                   <img
-                    src="images/misc/4.webp"
+                    src="/images/misc/4.webp"
                     className="jarallax-img"
                     alt="David Moreno"
                   />
@@ -299,7 +299,7 @@ const page = () => {
                   <div className="text-center">
                     {tool.image ? (
                       <img
-                        src={`images/logo/${tool.image}`}
+                        src={`/images/logo/${tool.image}`}
                         className="w-80px mb-3"
                         alt={tool.name}
                       />

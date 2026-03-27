@@ -1,13 +1,36 @@
-import { blogPosts } from "./blog";
+import { blogPosts } from "./blog-data.mjs";
+import {
+  SUPPORTED_LANGUAGES,
+  routeSlugs,
+} from "./route-data.mjs";
 
-export const routeTranslations = {
-  home: { es: "/", ca: "/", en: "/", sv: "/" },
-  about: { es: "/sobre-mi", ca: "/sobre-mi", en: "/about-me", sv: "/om-mig" },
-  services: { es: "/servicios", ca: "/serveis", en: "/services", sv: "/tjanster" },
-  projects: { es: "/proyectos", ca: "/projectes", en: "/projects", sv: "/projekt" },
-  blog: { es: "/blog", ca: "/blog", en: "/blog", sv: "/blogg" },
-  contact: { es: "/contacto", ca: "/contacte", en: "/contact", sv: "/kontakt" },
+export { SUPPORTED_LANGUAGES, routeSlugs };
+
+export const legacyRouteTranslations = routeSlugs;
+
+const createPrefixedPath = (language, slugPath) => {
+  if (language === "es") {
+    return !slugPath || slugPath === "/" ? "/" : slugPath;
+  }
+
+  if (!slugPath || slugPath === "/") {
+    return `/${language}`;
+  }
+
+  return `/${language}${slugPath}`;
 };
+
+export const routeTranslations = Object.fromEntries(
+  Object.entries(routeSlugs).map(([routeKey, translations]) => [
+    routeKey,
+    Object.fromEntries(
+      Object.entries(translations).map(([language, slugPath]) => [
+        language,
+        createPrefixedPath(language, slugPath),
+      ])
+    ),
+  ])
+);
 
 const normalizePath = (pathname) => {
   if (!pathname || pathname === "/") {
@@ -17,8 +40,36 @@ const normalizePath = (pathname) => {
   return pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
 };
 
+const stripLanguagePrefix = (pathname) => {
+  const normalizedPath = normalizePath(pathname);
+  const segments = normalizedPath.split("/").filter(Boolean);
+
+  if (!segments.length) {
+    return "/";
+  }
+
+  if (SUPPORTED_LANGUAGES.includes(segments[0])) {
+    const remaining = segments.slice(1);
+    return remaining.length ? `/${remaining.join("/")}` : "/";
+  }
+
+  return normalizedPath;
+};
+
+const getRouteKeyFromPath = (pathname) => {
+  const strippedPath = stripLanguagePrefix(pathname);
+
+  for (const [routeKey, translations] of Object.entries(routeSlugs)) {
+    if (Object.values(translations).includes(strippedPath)) {
+      return routeKey;
+    }
+  }
+
+  return null;
+};
+
 export const getPathForRoute = (routeKey, language) =>
-  routeTranslations[routeKey]?.[language] ?? "/";
+  routeTranslations[routeKey]?.[language] ?? routeTranslations.home.es;
 
 export const getBlogBasePath = (language) => getPathForRoute("blog", language);
 
@@ -34,55 +85,65 @@ export const getPathForBlogPost = (postId, language) => {
 
 export const getLanguageFromPath = (pathname) => {
   const normalizedPath = normalizePath(pathname);
+  const segments = normalizedPath.split("/").filter(Boolean);
 
-  for (const [routeKey, translations] of Object.entries(routeTranslations)) {
-    if (routeKey === "home" || routeKey === "blog") {
-      continue;
-    }
+  if (!segments.length) {
+    return "es";
+  }
 
-    const matchingLanguages = Object.entries(translations)
-      .filter(([, translatedPath]) => normalizedPath === translatedPath)
+  if (SUPPORTED_LANGUAGES.includes(segments[0])) {
+    return segments[0];
+  }
+
+  const routeKey = getRouteKeyFromPath(normalizedPath);
+
+  if (routeKey) {
+    const matchingLanguages = Object.entries(routeSlugs[routeKey])
+      .filter(([, translatedPath]) => translatedPath === normalizedPath)
       .map(([language]) => language);
 
-    if (matchingLanguages.length === 1) {
-      return matchingLanguages[0];
+    if (!matchingLanguages.length) {
+      return "es";
     }
 
-    if (matchingLanguages.length > 1) {
-      return null;
-    }
-  }
-
-  if (normalizedPath.startsWith("/blogg/")) {
-    return "sv";
-  }
-
-  if (normalizedPath === "/blogg") {
-    return "sv";
+    return matchingLanguages.length === 1 ? matchingLanguages[0] : "es";
   }
 
   const blogPost = getBlogPostFromPath(normalizedPath);
-  return blogPost?.language ?? null;
+  return blogPost?.language ?? "es";
 };
 
 export const getBlogPostFromPath = (pathname) => {
   const normalizedPath = normalizePath(pathname);
   const segments = normalizedPath.split("/").filter(Boolean);
 
-  if (segments.length !== 2) {
-    return null;
+  if (segments.length === 3 && SUPPORTED_LANGUAGES.includes(segments[0])) {
+    const [language, base, slug] = segments;
+    const expectedBase = routeSlugs.blog[language].replace("/", "");
+
+    if (base !== expectedBase) {
+      return null;
+    }
+
+    const post = blogPosts.find((item) => item.translations[language]?.slug === slug);
+
+    if (!post) {
+      return null;
+    }
+
+    return { id: post.id, language };
   }
 
-  const [base, slug] = segments;
+  if (segments.length === 2) {
+    const [base, slug] = segments;
 
-  if (base !== "blog" && base !== "blogg") {
-    return null;
-  }
+    for (const post of blogPosts) {
+      for (const [language, translation] of Object.entries(post.translations)) {
+        const expectedBase = routeSlugs.blog[language].replace("/", "");
 
-  for (const post of blogPosts) {
-    for (const [language, translation] of Object.entries(post.translations)) {
-      if (translation.slug === slug) {
-        return { id: post.id, language };
+        if (base === expectedBase && translation.slug === slug) {
+          return { id: post.id, language };
+        }
       }
     }
   }
@@ -93,12 +154,14 @@ export const getBlogPostFromPath = (pathname) => {
 export const translatePath = (pathname, targetLanguage) => {
   const normalizedPath = normalizePath(pathname);
 
-  for (const [routeKey, translations] of Object.entries(routeTranslations)) {
-    for (const translatedPath of Object.values(translations)) {
-      if (normalizedPath === translatedPath) {
-        return getPathForRoute(routeKey, targetLanguage);
-      }
-    }
+  if (normalizedPath === "/") {
+    return getPathForRoute("home", targetLanguage);
+  }
+
+  const routeKey = getRouteKeyFromPath(normalizedPath);
+
+  if (routeKey) {
+    return getPathForRoute(routeKey, targetLanguage);
   }
 
   const blogPost = getBlogPostFromPath(normalizedPath);
@@ -107,5 +170,5 @@ export const translatePath = (pathname, targetLanguage) => {
     return getPathForBlogPost(blogPost.id, targetLanguage);
   }
 
-  return pathname;
+  return normalizedPath;
 };

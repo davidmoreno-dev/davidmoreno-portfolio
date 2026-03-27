@@ -17,7 +17,7 @@ const uiContent = {
 };
 
 const BlogPost = ({ id, image, date, title, excerpt, comments, commentsLabel, language }) => {
-  const bgImage = "url(images/blog/" + image + ".webp)";
+  const bgImage = "url(/images/blog/" + image + ".webp)";
   const backgroundStyle = {
     background: "url('/images/blog/" + image + ".webp') 0% 0% / cover no-repeat",
   };

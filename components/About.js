@@ -42,7 +42,7 @@ const About = ({ bgColor = "bg-light" }) => {
               data-wow-delay=".6s"
             >
               <img
-                src="images/misc/4.webp"
+                src="/images/misc/4.webp"
                 className="jarallax-img"
                 alt="Dave"
               />

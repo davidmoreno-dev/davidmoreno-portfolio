@@ -110,7 +110,7 @@ const content = {
 };
 
 const WorkImage = ({ src, category }) => {
-  const imageSrc = "images/work-single/" + src + ".webp";
+  const imageSrc = "/images/work-single/" + src + ".webp";
 
   return (
     <div className="col-lg-6">
